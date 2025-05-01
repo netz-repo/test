@@ -4,274 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>לוח זמנים - בית הכנסת</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        html, body {
-            font-family: 'Frank Ruhl Libre', serif;
-            background-color: #e8f8f5;
-            color: #1a5276;
-            height: 100%;
-            width: 100%;
-            overflow: hidden; /* Prevent scroll */
-            direction: rtl;
-        }
-        
-        .container {
-            width: 100%;
-            height: 100%;
-            aspect-ratio: 16/9;
-            max-height: 100vh;
-            margin: 0 auto;
-            padding: 1.5vh 1.5vw;
-            display: grid;
-            grid-template-rows: auto 1fr auto;
-        }
-        
-        header {
-            text-align: center;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 1.5vh;
-            background-color: #1a5276;
-            border-radius: 10px 10px 0 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            height: 14vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .synagogue-name {
-            font-size: 7vh;
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
-        }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            gap: 2vw;
-            height: 76vh;
-            padding: 1.5vh 0;
-        }
-        
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 2vh;
-        }
-        
-        .panel {
-            background-color: #2874a6;
-            border-radius: 10px;
-            padding: 2vh 2vw;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            color: #fff;
-        }
-        
-        .center-column {
-            display: flex;
-            flex-direction: column;
-            gap: 2vh;
-        }
-        
-        .clock-container {
-            background-color: #3498db;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 62%;
-            padding: 5vh 4vw;
-            color: #fff;
-        }
-        
-        .panel {
-            background-color: #2874a6;
-            border-radius: 10px;
-            padding: 2vh 2vw;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            color: #fff;
-        };
-        }
-        
-        .clock-container {
-            background-color: #3498db;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 62%;
-            padding: 5vh 4vw;
-            color: #fff;
-        }
-        
-        .digital-clock {
-            font-size: 20vh;
-            font-weight: 700;
-            color: #fff;
-            font-family: 'Courier New', monospace;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
-            line-height: 1;
-        }
-        
-        .date-container {
-            text-align: center;
-            font-size: 4.5vh;
-            margin-top: 3vh;
-        }
-        
-        .hebrew-date {
-            font-weight: 500;
-        }
-        
-        .parasha {
-            font-weight: 700;
-            color: #e8f8f5;
-            margin-top: 3vh;
-            font-size: 6vh;
-        }
-        
-        .panel-title {
-            font-size: 4vh;
-            color: #48c9b0;
-            border-bottom: 2px solid #76d7c4;
-            padding-bottom: 1vh;
-            margin-bottom: 2vh;
-            text-align: center;
-        }
-        
-        .time-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2vh;
-            font-size: 3.5vh;
-            padding: 0 1vw;
-        }
-        
-        .time-label {
-            font-weight: 500;
-        }
-        
-        .time-value {
-            font-weight: 700;
-            color: #76d7c4;
-        }
-        
-        .shabbat-times {
-            background-color: #1a5276;
-            border: 2px solid #48c9b0;
-        }
-        
-        .shabbat-times .panel-title {
-            color: #76d7c4;
-        }
-        
-        .next-time-panel {
-            background-color: #2874a6;
-            border: 2px solid #48c9b0;
-            text-align: center;
-        }
-        
-        .next-time-panel .panel-title {
-            color: #76d7c4;
-        }
-        
-        .next-time-label {
-            font-size: 5vh;
-            font-weight: 600;
-            color: #fff;
-            margin-top: 1vh;
-        }
-        
-        .next-time-value {
-            font-size: 6vh;
-            font-weight: 700;
-            color: #fff;
-            margin-top: 1vh;
-        }
-        
-        .countdown {
-            font-size: 5vh;
-            font-weight: 700;
-            color: #48c9b0;
-            margin-top: 2vh;
-        }
-        
-        .notices {
-            background-color: #1a5276;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            height: 33%;
-        }
-        
-        .notices .panel-title {
-            color: #48c9b0;
-            font-size: 4vh;
-        }
-        
-        .notices-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            font-size: 5vh;
-            font-weight: 600;
-        }
-        
-        .notice-item {
-            font-size: 3.8vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1vh 1vw;
-            border-bottom: 2px dashed #3498db;
-            text-align: center;
-        }
-        
-        .notice-item:last-child {
-            border-bottom: none;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 1.5vh;
-            background-color: #1a5276;
-            border-radius: 0 0 10px 10px;
-            font-size: 3vh;
-            border-top: 3px solid #3498db;
-            height: 8vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-        }
-        
-        .donor-info {
-            font-style: italic;
-            color: #76d7c4;
-        }
-
-        /* הוספת סגנון של הודעת טעינה */
-        .loading-message {
-            text-align: center;
-            color: #ff9800;
-            font-weight: 700;
-            font-style: italic;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -347,9 +80,22 @@
         
         <footer>
             <div class="donor-info">המסך נתרם לעילוי נשמת ר' יוסף בן יעקב ז"ל ע"י משפחת כהן</div>
+            
+            <!-- תיבת הבחירה של סכמת הצבעים -->
+            <div class="color-theme-selector">
+                <label for="themeSelector">סכמת צבעים:</label>
+                <select id="themeSelector">
+                    <option value="blue-turquoise">כחול וטורקיז</option>
+                    <option value="red-gold">אדום וזהב</option>
+                    <option value="purple-cyan">סגול ותכלת</option>
+                    <option value="ochre-desert">אוכרה וצבעי מדבר</option>
+                </select>
+            </div>
         </footer>
     </div>
     
+    <!-- קבצי JavaScript -->
+    <script src="theme-handler.js"></script>
     <script>
         // מבנה נתונים לכל הזמנים
         let times = {
