@@ -1,0 +1,123 @@
+{
+    "days": [
+      {
+        "gregorianDate": "2025-05-01",
+        "hebrewDate": "ב' אייר תשפ\"ה",
+        "parasha": "פרשת בהר",
+        "zmanim": {
+          "alotHashachar": "04:52",
+          "tallitTime": "05:18",
+          "sunrise": "06:12",
+          "sunset": "19:28",
+          "tzetHakochavim": "19:54"
+        },
+        "shabbatTimes": {
+          "in": "19:08",
+          "out": "20:09"
+        },
+        "additions": "יעלה ויבוא (ראש חודש)"
+      },
+      {
+        "gregorianDate": "2025-05-02",
+        "hebrewDate": "ג' אייר תשפ\"ה",
+        "parasha": "פרשת אמור",
+        "zmanim": {
+          "alotHashachar": "04:51",
+          "tallitTime": "05:17",
+          "sunrise": "06:11",
+          "sunset": "19:29",
+          "tzetHakochavim": "19:55"
+        },
+        "shabbatTimes": {
+          "in": "19:09",
+          "out": "20:10"
+        },
+        "additions": "יעלה ויבוא (ראש חודש)"
+      },
+      {
+        "gregorianDate": "2025-05-03",
+        "hebrewDate": "ד' אייר תשפ\"ה",
+        "parasha": "פרשת אמור - שבת",
+        "zmanim": {
+          "alotHashachar": "04:50",
+          "tallitTime": "05:16",
+          "sunrise": "06:10",
+          "sunset": "19:30",
+          "tzetHakochavim": "19:56"
+        },
+        "shabbatTimes": {
+          "in": "19:09",
+          "out": "20:10"
+        },
+        "additions": "שבת קודש"
+      },
+      {
+        "gregorianDate": "2025-05-04",
+        "hebrewDate": "ה' אייר תשפ\"ה",
+        "parasha": "פרשת אמור",
+        "zmanim": {
+          "alotHashachar": "04:49",
+          "tallitTime": "05:15",
+          "sunrise": "06:09",
+          "sunset": "19:31",
+          "tzetHakochavim": "19:57"
+        },
+        "shabbatTimes": {
+          "in": "19:10",
+          "out": "20:11"
+        },
+        "additions": "יום העצמאות"
+      },
+      {
+        "gregorianDate": "2025-05-05",
+        "hebrewDate": "ו' אייר תשפ\"ה",
+        "parasha": "פרשת אמור",
+        "zmanim": {
+          "alotHashachar": "04:48",
+          "tallitTime": "05:14",
+          "sunrise": "06:08",
+          "sunset": "19:32",
+          "tzetHakochavim": "19:58"
+        },
+        "shabbatTimes": {
+          "in": "19:11",
+          "out": "20:12"
+        },
+        "additions": ""
+      },
+      {
+        "gregorianDate": "2025-05-06",
+        "hebrewDate": "ז' אייר תשפ\"ה",
+        "parasha": "פרשת אמור",
+        "zmanim": {
+          "alotHashachar": "04:47",
+          "tallitTime": "05:13",
+          "sunrise": "06:07",
+          "sunset": "19:33",
+          "tzetHakochavim": "19:59"
+        },
+        "shabbatTimes": {
+          "in": "19:12",
+          "out": "20:13"
+        },
+        "additions": ""
+      },
+      {
+        "gregorianDate": "2025-05-07",
+        "hebrewDate": "ח' אייר תשפ\"ה",
+        "parasha": "פרשת אמור",
+        "zmanim": {
+          "alotHashachar": "04:46",
+          "tallitTime": "05:12",
+          "sunrise": "06:06",
+          "sunset": "19:34",
+          "tzetHakochavim": "20:00"
+        },
+        "shabbatTimes": {
+          "in": "19:13",
+          "out": "20:14"
+        },
+        "additions": ""
+      }
+    ]
+  }

@@ -76,6 +76,12 @@
             color: #fff;
         }
         
+        .center-column {
+            display: flex;
+            flex-direction: column;
+            gap: 2vh;
+        }
+        
         .clock-container {
             background-color: #3498db;
             border-radius: 10px;
@@ -84,8 +90,30 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            height: 100%;
-            padding: 3vh 0;
+            height: 62%;
+            padding: 5vh 4vw;
+            color: #fff;
+        }
+        
+        .panel {
+            background-color: #2874a6;
+            border-radius: 10px;
+            padding: 2vh 2vw;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            color: #fff;
+        };
+        }
+        
+        .clock-container {
+            background-color: #3498db;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 62%;
+            padding: 5vh 4vw;
             color: #fff;
         }
         
@@ -150,21 +178,35 @@
             color: #76d7c4;
         }
         
-        .tallit-tefillin {
+        .next-time-panel {
             background-color: #2874a6;
             border: 2px solid #48c9b0;
             text-align: center;
         }
         
-        .tallit-tefillin .panel-title {
+        .next-time-panel .panel-title {
             color: #76d7c4;
         }
         
-        .tallit-time {
+        .next-time-label {
+            font-size: 5vh;
+            font-weight: 600;
+            color: #fff;
+            margin-top: 1vh;
+        }
+        
+        .next-time-value {
             font-size: 6vh;
             font-weight: 700;
             color: #fff;
             margin-top: 1vh;
+        }
+        
+        .countdown {
+            font-size: 5vh;
+            font-weight: 700;
+            color: #48c9b0;
+            margin-top: 2vh;
         }
         
         .notices {
@@ -172,6 +214,7 @@
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            height: 33%;
         }
         
         .notices .panel-title {
@@ -180,9 +223,12 @@
         }
         
         .notices-content {
-            display: grid;
-            grid-template-rows: repeat(3, 1fr);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             height: 100%;
+            font-size: 5vh;
+            font-weight: 600;
         }
         
         .notice-item {
@@ -217,6 +263,14 @@
             font-style: italic;
             color: #76d7c4;
         }
+
+        /* הוספת סגנון של הודעת טעינה */
+        .loading-message {
+            text-align: center;
+            color: #ff9800;
+            font-weight: 700;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -227,59 +281,65 @@
         
         <div class="main-content">
             <div class="sidebar">
-                <div class="panel tallit-tefillin">
-                    <h2 class="panel-title">זמן טלית ותפילין</h2>
-                    <div class="tallit-time" id="tallitTime">05:18</div>
-                </div>
-                
-                <div class="panel">
-                    <h2 class="panel-title">זמני היום</h2>
-                    <div class="time-item">
-                        <span class="time-label">עלות השחר</span>
-                        <span class="time-value" id="alotHashachar">04:52</span>
-                    </div>
-                    <div class="time-item">
-                        <span class="time-label">זריחה</span>
-                        <span class="time-value" id="sunrise">06:12</span>
-                    </div>
-                    <div class="time-item">
-                        <span class="time-label">שקיעה</span>
-                        <span class="time-value" id="sunset">19:28</span>
-                    </div>
-                    <div class="time-item">
-                        <span class="time-label">צאת הכוכבים</span>
-                        <span class="time-value" id="tzetHakochavim">19:54</span>
-                    </div>
+                <div class="panel next-time-panel">
+                    <h2 class="panel-title" id="nextTimeTitle">הזמן הקרוב</h2>
+                    <div class="next-time-label" id="nextTimeLabel">-</div>
+                    <div class="next-time-value" id="nextTimeValue">-</div>
+                    <div class="countdown" id="countdown">--:--:--</div>
                 </div>
                 
                 <div class="panel shabbat-times">
                     <h2 class="panel-title">זמני שבת קודש</h2>
                     <div class="time-item">
                         <span class="time-label">כניסת שבת</span>
-                        <span class="time-value" id="shabbatIn">19:08</span>
+                        <span class="time-value" id="shabbatIn">--:--</span>
                     </div>
                     <div class="time-item">
                         <span class="time-label">יציאת שבת</span>
-                        <span class="time-value" id="shabbatOut">20:09</span>
+                        <span class="time-value" id="shabbatOut">--:--</span>
                     </div>
                 </div>
             </div>
             
-            <div class="clock-container">
-                <div class="digital-clock" id="clock">16:30:45</div>
-                <div class="date-container">
-                    <div class="hebrew-date" id="hebrewDate">ב' אייר תשפ"ה</div>
-                    <div class="parasha" id="parashaWeek">פרשת אמור</div>
+            <div class="center-column">
+                <div class="clock-container">
+                    <div class="digital-clock" id="clock">--:--:--</div>
+                    <div class="date-container">
+                        <div class="hebrew-date" id="hebrewDate">--</div>
+                        <div class="parasha" id="parashaWeek">--</div>
+                    </div>
+                </div>
+                
+                <div class="panel notices">
+                    <h2 class="panel-title">תוספות לתפילה</h2>
+                    <div class="notices-content" id="noticesContent">
+                        <div class="notice-item" id="noticeItem">--</div>
+                    </div>
                 </div>
             </div>
             
             <div class="sidebar">
-                <div class="panel notices">
-                    <h2 class="panel-title">הוספות והודעות</h2>
-                    <div class="notices-content">
-                        <div class="notice-item">יעלה ויבוא (ראש חודש)</div>
-                        <div class="notice-item">תפילת שחרית: 06:30 | מנחה: 19:15 | ערבית: 20:00</div>
-                        <div class="notice-item">שיעור דף יומי לאחר תפילת ערבית</div>
+                <div class="panel">
+                    <h2 class="panel-title">זמני היום</h2>
+                    <div class="time-item">
+                        <span class="time-label">עלות השחר</span>
+                        <span class="time-value" id="alotHashachar">--:--</span>
+                    </div>
+                    <div class="time-item">
+                        <span class="time-label">זמן טלית ותפילין</span>
+                        <span class="time-value" id="tallitTime">--:--</span>
+                    </div>
+                    <div class="time-item">
+                        <span class="time-label">זריחה</span>
+                        <span class="time-value" id="sunrise">--:--</span>
+                    </div>
+                    <div class="time-item">
+                        <span class="time-label">שקיעה</span>
+                        <span class="time-value" id="sunset">--:--</span>
+                    </div>
+                    <div class="time-item">
+                        <span class="time-label">צאת הכוכבים</span>
+                        <span class="time-value" id="tzetHakochavim">--:--</span>
                     </div>
                 </div>
             </div>
@@ -291,7 +351,96 @@
     </div>
     
     <script>
-        // עדכון שעון דיגיטלי
+        // מבנה נתונים לכל הזמנים
+        let times = {
+            alotHashachar: { label: "עלות השחר", time: "--:--", id: "alotHashachar" },
+            tallitTime: { label: "זמן טלית ותפילין", time: "--:--", id: "tallitTime" },
+            sunrise: { label: "זריחה", time: "--:--", id: "sunrise" },
+            sunset: { label: "שקיעה", time: "--:--", id: "sunset" },
+            tzetHakochavim: { label: "צאת הכוכבים", time: "--:--", id: "tzetHakochavim" }
+        };
+        
+        // זמני שבת - לא נלקחים לחישוב הזמן הקרוב
+        let shabbatTimes = {
+            shabbatIn: { label: "כניסת שבת", time: "--:--", id: "shabbatIn" },
+            shabbatOut: { label: "יציאת שבת", time: "--:--", id: "shabbatOut" }
+        };
+
+        // משתנים גלובליים להחזקת הנתונים מהקובץ JSON
+        let jsonData = null;
+        let currentDayData = null;
+        
+        // פונקציה לטעינת נתוני הזמנים מקובץ JSON
+        async function loadTimesData() {
+            try {
+                const response = await fetch('synagogue-times.json');
+                if (!response.ok) {
+                    throw new Error('לא ניתן לטעון את קובץ הזמנים');
+                }
+                jsonData = await response.json();
+                return true;
+            } catch (error) {
+                console.error('שגיאה בטעינת קובץ הזמנים:', error);
+                return false;
+            }
+        }
+        
+        // פונקציה למציאת האובייקט המתאים לתאריך הנוכחי
+        function findCurrentDayData() {
+            if (!jsonData || !jsonData.days) {
+                return null;
+            }
+            
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const currentDateString = `${year}-${month}-${day}`;
+            
+            // חפש את היום הנוכחי בקובץ JSON
+            return jsonData.days.find(dayData => dayData.gregorianDate === currentDateString);
+        }
+        
+        // פונקציה לעדכון כל הזמנים בהתאם לנתונים שנטענו
+        function updateAllTimes(dayData) {
+            if (!dayData) {
+                // אם אין נתונים זמינים, הצג מידע דמה
+                document.getElementById('hebrewDate').textContent = "לא זמין";
+                document.getElementById('parashaWeek').textContent = "טעינה נכשלה";
+                document.getElementById('noticeItem').textContent = "אין נתונים";
+                return;
+            }
+            
+            // עדכון תאריך והפרשה
+            document.getElementById('hebrewDate').textContent = dayData.hebrewDate;
+            document.getElementById('parashaWeek').textContent = dayData.parasha;
+            
+            // עדכון זמני היום
+            times.alotHashachar.time = dayData.zmanim.alotHashachar;
+            times.tallitTime.time = dayData.zmanim.tallitTime;
+            times.sunrise.time = dayData.zmanim.sunrise;
+            times.sunset.time = dayData.zmanim.sunset;
+            times.tzetHakochavim.time = dayData.zmanim.tzetHakochavim;
+            
+            // עדכון זמני שבת
+            shabbatTimes.shabbatIn.time = dayData.shabbatTimes.in;
+            shabbatTimes.shabbatOut.time = dayData.shabbatTimes.out;
+            
+            // עדכון הודעות ותוספות
+            document.getElementById('noticeItem').textContent = dayData.additions || "אין תוספות לתפילה היום";
+            
+            // עדכון תצוגת הזמנים
+            for (const [key, info] of Object.entries(times)) {
+                document.getElementById(info.id).textContent = info.time;
+            }
+            
+            // עדכון תצוגת זמני שבת
+            for (const [key, info] of Object.entries(shabbatTimes)) {
+                document.getElementById(info.id).textContent = info.time;
+            }
+        }
+
+        // עדכון שעון דיגיטלי וקוביית הזמן הקרוב
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -300,39 +449,94 @@
             
             document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
             
+            // בדוק אם צריך להחליף יום (בחצות)
+            if (hours === '00' && minutes === '00' && seconds === '00') {
+                checkAndUpdateDay();
+            }
+            
+            // עדכון קוביית הזמן הקרוב וספירה לאחור
+            updateNextTimePanel();
+            
             // עדכון בכל שנייה
             setTimeout(updateClock, 1000);
         }
         
-        // פונקציה להגדרת התאריך העברי
-        function setHebrewDate() {
-            // כאן יש להוסיף חישוב תאריך עברי אמיתי או להשתמש בספריה חיצונית
-            // לצורך הדגמה אנחנו משתמשים בתאריך קבוע
-            const hebrewDate = "ב' אייר תשפ\"ה";
-            document.getElementById('hebrewDate').textContent = hebrewDate;
+        // פונקציה לחישוב הזמן הבא הקרוב ביותר
+        function updateNextTimePanel() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTimeInMinutes = currentHour * 60 + currentMinute;
+            
+            // המר את כל הזמנים לדקות מתחילת היום
+            const timeEntries = Object.entries(times).map(([key, info]) => {
+                const [hours, minutes] = info.time.split(':').map(Number);
+                const timeInMinutes = hours * 60 + minutes;
+                return {
+                    key,
+                    label: info.label,
+                    time: info.time,
+                    timeInMinutes,
+                    diff: timeInMinutes - currentTimeInMinutes
+                };
+            });
+            
+            // מצא את הזמן הקרוב ביותר שטרם הגיע
+            let nextTime = timeEntries
+                .filter(t => t.diff > 0 && !isNaN(t.timeInMinutes))
+                .sort((a, b) => a.diff - b.diff)[0];
+            
+            // אם כל הזמנים היום כבר עברו, בחר את הזמן המוקדם ביותר של היום הבא
+            if (!nextTime) {
+                nextTime = timeEntries
+                    .filter(t => !isNaN(t.timeInMinutes))
+                    .sort((a, b) => a.timeInMinutes - b.timeInMinutes)[0];
+                
+                if (nextTime) {
+                    // הוסף 24 שעות (1440 דקות) לזמן של מחר
+                    nextTime.diff = nextTime.timeInMinutes + 1440 - currentTimeInMinutes;
+                } else {
+                    // אם אין נתונים תקינים, הצג הודעת ברירת מחדל
+                    document.getElementById('nextTimeLabel').textContent = "אין מידע";
+                    document.getElementById('nextTimeValue').textContent = "--:--";
+                    document.getElementById('countdown').textContent = "--:--:--";
+                    return;
+                }
+            }
+            
+            // עדכן את הקוביה
+            document.getElementById('nextTimeLabel').textContent = nextTime.label;
+            document.getElementById('nextTimeValue').textContent = nextTime.time;
+            
+            // חשב את הספירה לאחור
+            const diffHours = Math.floor(nextTime.diff / 60);
+            const diffMinutes = nextTime.diff % 60;
+            const diffSeconds = 59 - now.getSeconds();
+            
+            // הצג את הספירה לאחור
+            document.getElementById('countdown').textContent = 
+                `${String(diffHours).padStart(2, '0')}:${String(diffMinutes).padStart(2, '0')}:${String(diffSeconds).padStart(2, '0')}`;
         }
         
-        // פונקציה לעדכון כל הזמנים בהתאם למיקום וליום
-        function updateAllTimes() {
-            // כאן יש להוסיף API שמחשב את כל הזמנים היהודיים
-            // לצורך הדגמה אנחנו משתמשים בזמנים קבועים
-            
-            // הזמנים כאן הם לדוגמה בלבד ויש להחליף אותם בחישוב אמיתי
-            document.getElementById('alotHashachar').textContent = "04:52";
-            document.getElementById('tallitTime').textContent = "05:18";
-            document.getElementById('sunrise').textContent = "06:12";
-            document.getElementById('sunset').textContent = "19:28";
-            document.getElementById('tzetHakochavim').textContent = "19:54";
-            document.getElementById('shabbatIn').textContent = "19:08";
-            document.getElementById('shabbatOut').textContent = "20:09";
-            document.getElementById('parashaWeek').textContent = "פרשת אמור";
+        // פונקציה לבדיקה והחלפת היום בחצות
+        async function checkAndUpdateDay() {
+            const success = await loadTimesData();
+            if (success) {
+                currentDayData = findCurrentDayData();
+                updateAllTimes(currentDayData);
+            } else {
+                // אם הטעינה נכשלה, הצג מידע דמה
+                updateAllTimes(null);
+            }
         }
         
         // הפעלת כל הפונקציות בטעינת העמוד
-        window.onload = function() {
+        window.onload = async function() {
+            // הפעל את השעון הדיגיטלי
             updateClock();
-            setHebrewDate();
-            updateAllTimes();
+            
+            // טען את קובץ הJSON וכל הנתונים
+            await checkAndUpdateDay();
         };
     </script>
 </body>
