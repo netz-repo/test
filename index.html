@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לוח זמנים - בית הכנסת</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            font-family: 'Frank Ruhl Libre', serif;
+            background-color: #e8f8f5;
+            color: #1a5276;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Prevent scroll */
+            direction: rtl;
+        }
+        
+        .container {
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 16/9;
+            max-height: 100vh;
+            margin: 0 auto;
+            padding: 1.5vh 1.5vw;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+        
+        header {
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 1.5vh;
+            background-color: #1a5276;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            height: 14vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .synagogue-name {
+            font-size: 7vh;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2vw;
+            height: 76vh;
+            padding: 1.5vh 0;
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2vh;
+        }
+        
+        .panel {
+            background-color: #2874a6;
+            border-radius: 10px;
+            padding: 2vh 2vw;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            color: #fff;
+        }
+        
+        .clock-container {
+            background-color: #3498db;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            padding: 3vh 0;
+            color: #fff;
+        }
+        
+        .digital-clock {
+            font-size: 20vh;
+            font-weight: 700;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            line-height: 1;
+        }
+        
+        .date-container {
+            text-align: center;
+            font-size: 4.5vh;
+            margin-top: 3vh;
+        }
+        
+        .hebrew-date {
+            font-weight: 500;
+        }
+        
+        .parasha {
+            font-weight: 700;
+            color: #e8f8f5;
+            margin-top: 3vh;
+            font-size: 6vh;
+        }
+        
+        .panel-title {
+            font-size: 4vh;
+            color: #48c9b0;
+            border-bottom: 2px solid #76d7c4;
+            padding-bottom: 1vh;
+            margin-bottom: 2vh;
+            text-align: center;
+        }
+        
+        .time-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2vh;
+            font-size: 3.5vh;
+            padding: 0 1vw;
+        }
+        
+        .time-label {
+            font-weight: 500;
+        }
+        
+        .time-value {
+            font-weight: 700;
+            color: #76d7c4;
+        }
+        
+        .shabbat-times {
+            background-color: #1a5276;
+            border: 2px solid #48c9b0;
+        }
+        
+        .shabbat-times .panel-title {
+            color: #76d7c4;
+        }
+        
+        .tallit-tefillin {
+            background-color: #2874a6;
+            border: 2px solid #48c9b0;
+            text-align: center;
+        }
+        
+        .tallit-tefillin .panel-title {
+            color: #76d7c4;
+        }
+        
+        .tallit-time {
+            font-size: 6vh;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 1vh;
+        }
+        
+        .notices {
+            background-color: #1a5276;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .notices .panel-title {
+            color: #48c9b0;
+            font-size: 4vh;
+        }
+        
+        .notices-content {
+            display: grid;
+            grid-template-rows: repeat(3, 1fr);
+            height: 100%;
+        }
+        
+        .notice-item {
+            font-size: 3.8vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1vh 1vw;
+            border-bottom: 2px dashed #3498db;
+            text-align: center;
+        }
+        
+        .notice-item:last-child {
+            border-bottom: none;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1.5vh;
+            background-color: #1a5276;
+            border-radius: 0 0 10px 10px;
+            font-size: 3vh;
+            border-top: 3px solid #3498db;
+            height: 8vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        
+        .donor-info {
+            font-style: italic;
+            color: #76d7c4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="synagogue-name">בית הכנסת המרכזי</h1>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="panel tallit-tefillin">
+                    <h2 class="panel-title">זמן טלית ותפילין</h2>
+                    <div class="tallit-time" id="tallitTime">05:18</div>
+                </div>
+                
+                <div class="panel">
+                    <h2 class="panel-title">זמני היום</h2>
+                    <div class="time-item">
+                        <span class="time-label">עלות השחר</span>
+                        <span class="time-value" id="alotHashachar">04:52</span>
+                    </div>
+                    <div class="time-item">
+                        <span class="time-label">זריחה</span>
+                        <span class="time-value" id="sunrise">06:12</span>
+                    </div>
+                    <div class="time-item">
+                        <span class="time-label">שקיעה</span>
+                        <span class="time-value" id="sunset">19:28</span>
+                    </div>
+                    <div class="time-item">
+                        <span class="time-label">צאת הכוכבים</span>
+                        <span class="time-value" id="tzetHakochavim">19:54</span>
+                    </div>
+                </div>
+                
+                <div class="panel shabbat-times">
+                    <h2 class="panel-title">זמני שבת קודש</h2>
+                    <div class="time-item">
+                        <span class="time-label">כניסת שבת</span>
+                        <span class="time-value" id="shabbatIn">19:08</span>
+                    </div>
+                    <div class="time-item">
+                        <span class="time-label">יציאת שבת</span>
+                        <span class="time-value" id="shabbatOut">20:09</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="clock-container">
+                <div class="digital-clock" id="clock">16:30:45</div>
+                <div class="date-container">
+                    <div class="hebrew-date" id="hebrewDate">ב' אייר תשפ"ה</div>
+                    <div class="parasha" id="parashaWeek">פרשת אמור</div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="panel notices">
+                    <h2 class="panel-title">הוספות והודעות</h2>
+                    <div class="notices-content">
+                        <div class="notice-item">יעלה ויבוא (ראש חודש)</div>
+                        <div class="notice-item">תפילת שחרית: 06:30 | מנחה: 19:15 | ערבית: 20:00</div>
+                        <div class="notice-item">שיעור דף יומי לאחר תפילת ערבית</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="donor-info">המסך נתרם לעילוי נשמת ר' יוסף בן יעקב ז"ל ע"י משפחת כהן</div>
+        </footer>
+    </div>
+    
+    <script>
+        // עדכון שעון דיגיטלי
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // עדכון בכל שנייה
+            setTimeout(updateClock, 1000);
+        }
+        
+        // פונקציה להגדרת התאריך העברי
+        function setHebrewDate() {
+            // כאן יש להוסיף חישוב תאריך עברי אמיתי או להשתמש בספריה חיצונית
+            // לצורך הדגמה אנחנו משתמשים בתאריך קבוע
+            const hebrewDate = "ב' אייר תשפ\"ה";
+            document.getElementById('hebrewDate').textContent = hebrewDate;
+        }
+        
+        // פונקציה לעדכון כל הזמנים בהתאם למיקום וליום
+        function updateAllTimes() {
+            // כאן יש להוסיף API שמחשב את כל הזמנים היהודיים
+            // לצורך הדגמה אנחנו משתמשים בזמנים קבועים
+            
+            // הזמנים כאן הם לדוגמה בלבד ויש להחליף אותם בחישוב אמיתי
+            document.getElementById('alotHashachar').textContent = "04:52";
+            document.getElementById('tallitTime').textContent = "05:18";
+            document.getElementById('sunrise').textContent = "06:12";
+            document.getElementById('sunset').textContent = "19:28";
+            document.getElementById('tzetHakochavim').textContent = "19:54";
+            document.getElementById('shabbatIn').textContent = "19:08";
+            document.getElementById('shabbatOut').textContent = "20:09";
+            document.getElementById('parashaWeek').textContent = "פרשת אמור";
+        }
+        
+        // הפעלת כל הפונקציות בטעינת העמוד
+        window.onload = function() {
+            updateClock();
+            setHebrewDate();
+            updateAllTimes();
+        };
+    </script>
+</body>
+</html>
