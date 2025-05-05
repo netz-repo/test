@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>מערכת מידע לבית כנסת</title>
     <style>
         body {
@@ -132,7 +129,6 @@
             background-color: rgba(0, 0, 0, 0.05);
             padding: 3px 6px;
             border-radius: 3px;
-            display: inline-block;
         }
         
         footer {
@@ -193,53 +189,14 @@
                 font-size: 1.5rem;
             }
         }
-        
-        /* סגנון לכפתור הריענון */
-        #refresh-page {
-            margin-right: 10px; 
-            background-color: #f0f0f0; 
-            border: 1px solid #ccc; 
-            border-radius: 3px; 
-            padding: 2px 8px; 
-            cursor: pointer; 
-            font-size: 0.8rem;
-        }
-        
-        #refresh-page:hover {
-            background-color: #e0e0e0;
-        }
-        
-        /* כפתור טעינה מחדש */
-        #load-data-btn {
-            background-color: #213e8c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 15px;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-        
-        /* תוסיף תגית גרסה קטנה בפינה */
-        .version-tag {
-            position: fixed;
-            top: 5px;
-            left: 5px;
-            font-size: 0.7rem;
-            color: #999;
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
     </style>
 </head>
 <body>
     <div class="background"></div>
-    <div class="version-tag">גרסה 2.1</div>
     
     <div class="container">
         <header>
-            <h1 id="synagogue-name">בית הכנסת המרכזי2</h1>
+            <h1 id="synagogue-name">בית הכנסת המרכזי</h1>
         </header>
         
         <div class="content">
@@ -266,8 +223,6 @@
                     <!-- יטען דינמית מה-JSON -->
                 </div>
             </div>
-            
-            <button id="load-data-btn">טען נתונים מחדש</button>
         </div>
         
         <footer>
@@ -275,20 +230,13 @@
         </footer>
     </div>
     
-    <div class="update-status" id="update-status">
-        מצב חיבור: בדיקה...
-        <span class="countdown" id="countdown"></span>
-        <button id="refresh-page">רענן דף</button>
-    </div>
+    <div class="update-status" id="update-status">מצב חיבור: בדיקה...<span class="countdown" id="countdown"></span></div>
     
     <div class="loading" id="loading">
         <div class="spinner"></div>
     </div>
     
     <script>
-        // יצירת אלמנטים מראש למניעת בעיות
-        const countdownElement = document.getElementById('countdown');
-        
         // רישום ה-Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -302,7 +250,7 @@
                         console.error('רישום Service Worker נכשל:', error);
                         document.getElementById('update-status').textContent = 'מצב חיבור: שגיאה ברישום Service Worker';
                         // הצג את השגיאה המדויקת
-                        console.log('שגיאת רישום Service Worker: ' + error.message);
+                        alert('שגיאת רישום Service Worker: ' + error.message);
                     });
             });
         }
@@ -313,106 +261,32 @@
         let currentData = null;
         let currentVersion = null;
         
-        // משתנים לניהול הספירה לאחור
-        let countdownInterval;
-        let secondsLeft = 60;
-        
-        // פונקציה לעדכון הספירה לאחור
-        function updateCountdown() {
-            if (countdownElement) {
-                countdownElement.textContent = `בדיקת עדכונים בעוד: ${secondsLeft} שניות`;
-                
-                if (secondsLeft <= 0) {
-                    // בדוק עדכונים כשהספירה לאחור מגיעה לאפס
-                    if (navigator.onLine) {
-                        checkForUpdates();
-                    }
-                    // אתחל את הספירה לאחור מחדש
-                    secondsLeft = 60;
-                } else {
-                    secondsLeft--;
-                }
-            }
-        }
-        
-        // טיפול בכפתור טעינה מחדש
-        document.getElementById('load-data-btn').addEventListener('click', function() {
-            console.log('מנסה לטעון נתונים מחדש...');
-            loadData();
-        });
-        
         // פונקציה לטעינת המידע מקובץ JSON מקומי
         async function loadData() {
             try {
-                console.log('מנסה לטעון נתונים מ:', JSON_URL);
-                document.getElementById('loading').classList.add('active');
-                
-                // נסה לטעון את הקובץ עם פרמטר למניעת מטמון
-                const response = await fetch(JSON_URL + '?t=' + new Date().getTime(), { 
-                    cache: 'no-store',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                });
-                
+                const response = await fetch(JSON_URL);
                 if (!response.ok) {
                     throw new Error(`שגיאה בטעינת המידע: ${response.status}`);
                 }
                 
-                console.log('תגובה התקבלה:', response);
-                
-                // בדוק אם יש תוכן
-                const text = await response.text();
-                console.log('תוכן התגובה (חלקי):', text.substring(0, 100) + '...');
-                
-                if (!text || text.trim() === '') {
-                    throw new Error('הקובץ ריק');
-                }
-                
-                // המר את הטקסט ל-JSON
-                try {
-                    currentData = JSON.parse(text);
-                    console.log('JSON נטען בהצלחה:', Object.keys(currentData));
-                    renderData(currentData);
-                } catch (jsonError) {
-                    console.error('שגיאה בניתוח JSON:', jsonError);
-                    throw new Error('קובץ JSON לא תקין');
-                }
+                currentData = await response.json();
+                renderData(currentData);
                 
                 // נסה לטעון את גרסת הקובץ
                 try {
-                    const versionResponse = await fetch(JSON_VERSION_URL + '?t=' + new Date().getTime(), {
-                        cache: 'no-store',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Cache-Control': 'no-cache, no-store, must-revalidate',
-                            'Pragma': 'no-cache',
-                            'Expires': '0'
-                        }
-                    });
-                    
+                    const versionResponse = await fetch(JSON_VERSION_URL);
                     if (versionResponse.ok) {
-                        const versionText = await versionResponse.text();
-                        if (versionText && versionText.trim() !== '') {
-                            currentVersion = JSON.parse(versionText);
-                            document.getElementById('update-time').textContent = `עדכון אחרון: ${currentVersion.lastUpdate}`;
-                        }
+                        currentVersion = await versionResponse.json();
+                        document.getElementById('update-time').textContent = `עדכון אחרון: ${currentVersion.lastUpdate}`;
                     }
                 } catch (versionError) {
                     console.warn('לא ניתן לטעון מידע גרסה:', versionError);
                 }
                 
-                document.getElementById('loading').classList.remove('active');
-                
             } catch (error) {
                 console.error('שגיאה בטעינת המידע:', error);
-                console.log('שגיאה בטעינת המידע: ' + error.message);
-                document.getElementById('prayer-times-body').innerHTML = '<tr><td colspan="3">שגיאה בטעינת זמני התפילה: ' + error.message + '</td></tr>';
-                document.getElementById('announcements-container').innerHTML = '<div class="announcement-item"><div class="announcement-title">שגיאה</div><p>שגיאה בטעינת ההודעות: ' + error.message + '</p></div>';
-                document.getElementById('loading').classList.remove('active');
+                document.getElementById('prayer-times-body').innerHTML = '<tr><td colspan="3">שגיאה בטעינת זמני התפילה</td></tr>';
+                document.getElementById('announcements-container').innerHTML = '<div class="announcement-item"><div class="announcement-title">שגיאה</div><p>שגיאה בטעינת ההודעות</p></div>';
             }
         }
         
@@ -527,20 +401,10 @@
             // בדוק אם יש חיבור לאינטרנט
             if (navigator.onLine) {
                 updateStatus.textContent = 'מצב חיבור: מחובר';
-                
-                if (countdownElement) {
-                    countdownElement.style.display = 'inline-block';
-                }
+                document.getElementById('countdown').style.display = 'inline-block';
                 
                 // בדוק האם יש גרסה חדשה של הקובץ
-                fetch(JSON_VERSION_URL + '?t=' + new Date().getTime(), { 
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                })
+                fetch(JSON_VERSION_URL + '?t=' + new Date().getTime(), { cache: 'no-store' })
                     .then(response => {
                         if (!response.ok) throw new Error('שגיאה בבדיקת גרסה');
                         return response.json();
@@ -551,14 +415,7 @@
                             document.getElementById('loading').classList.add('active');
                             
                             // הורד את הקובץ החדש
-                            return fetch(JSON_URL + '?t=' + new Date().getTime(), { 
-                                cache: 'no-store',
-                                headers: {
-                                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                                    'Pragma': 'no-cache',
-                                    'Expires': '0'
-                                }
-                            })
+                            return fetch(JSON_URL + '?t=' + new Date().getTime(), { cache: 'no-store' })
                                 .then(response => {
                                     if (!response.ok) throw new Error('שגיאה בהורדת עדכון');
                                     return response.json();
@@ -580,3 +437,82 @@
                                             url: JSON_VERSION_URL,
                                             data: versionData
                                         });
+                                    }
+                                    
+                                    // הצג את המידע החדש
+                                    renderData(newData);
+                                    document.getElementById('update-time').textContent = `עדכון אחרון: ${versionData.lastUpdate}`;
+                                    
+                                    updateStatus.textContent = 'מצב חיבור: מחובר (עודכן)';
+                                    document.getElementById('loading').classList.remove('active');
+                                    
+                                    // אתחל את הספירה לאחור
+                                    secondsLeft = 60;
+                                });
+                        } else {
+                            updateStatus.textContent = 'מצב חיבור: מחובר (מעודכן)';
+                            
+                            // אתחל את הספירה לאחור
+                            secondsLeft = 60;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('שגיאה בבדיקת עדכונים:', error);
+                        updateStatus.textContent = 'מצב חיבור: מחובר (שגיאה בבדיקת עדכונים)';
+                        document.getElementById('loading').classList.remove('active');
+                    });
+            } else {
+                updateStatus.textContent = 'מצב חיבור: לא מחובר';
+            }
+        }
+        
+        // בדוק שינויים במצב החיבור לאינטרנט
+        window.addEventListener('online', () => {
+            checkForUpdates();
+            document.getElementById('countdown').style.display = 'inline-block';
+        });
+        
+        window.addEventListener('offline', () => {
+            document.getElementById('update-status').textContent = 'מצב חיבור: לא מחובר';
+            document.getElementById('countdown').style.display = 'none';
+        });
+        
+        // טעינה ראשונית של המידע
+        loadData();
+        
+        // משתנים לניהול הספירה לאחור
+        let countdownInterval;
+        let secondsLeft = 60;
+        
+        // פונקציה לעדכון הספירה לאחור
+        function updateCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            countdownElement.textContent = `בדיקת עדכונים בעוד: ${secondsLeft} שניות`;
+            
+            if (secondsLeft <= 0) {
+                // בדוק עדכונים כשהספירה לאחור מגיעה לאפס
+                if (navigator.onLine) {
+                    checkForUpdates();
+                }
+                // אתחל את הספירה לאחור מחדש
+                secondsLeft = 60;
+            } else {
+                secondsLeft--;
+            }
+        }
+        
+        // התחל את הספירה לאחור
+        countdownInterval = setInterval(updateCountdown, 1000);
+        
+        // התחל את הספירה לאחור מיד
+        updateCountdown();
+        
+        // רענן את התאריך הנוכחי כל דקה
+        setInterval(() => {
+            if (currentData) {
+                document.getElementById('current-date').textContent = getHebrewDate(new Date(), currentData.hebrewDateFormat);
+            }
+        }, 60 * 1000);
+    </script>
+</body>
+</html>
