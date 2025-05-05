@@ -297,20 +297,61 @@
         // פונקציה לטעינת המידע מקובץ JSON מקומי
         async function loadData() {
             try {
-                const response = await fetch(JSON_URL);
+                console.log('מנסה לטעון נתונים מ:', JSON_URL);
+                
+                // נסה לטעון את הקובץ עם פרמטר למניעת מטמון
+                const response = await fetch(JSON_URL + '?t=' + new Date().getTime(), { 
+                    cache: 'no-store',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+                
                 if (!response.ok) {
                     throw new Error(`שגיאה בטעינת המידע: ${response.status}`);
                 }
                 
-                currentData = await response.json();
-                renderData(currentData);
+                console.log('תגובה התקבלה:', response);
+                
+                // בדוק אם יש תוכן
+                const text = await response.text();
+                console.log('תוכן התגובה:', text.substring(0, 100) + '...');
+                
+                if (!text || text.trim() === '') {
+                    throw new Error('הקובץ ריק');
+                }
+                
+                // המר את הטקסט ל-JSON
+                try {
+                    currentData = JSON.parse(text);
+                    console.log('JSON נטען בהצלחה:', Object.keys(currentData));
+                    renderData(currentData);
+                } catch (jsonError) {
+                    console.error('שגיאה בניתוח JSON:', jsonError);
+                    throw new Error('קובץ JSON לא תקין');
+                }
                 
                 // נסה לטעון את גרסת הקובץ
                 try {
-                    const versionResponse = await fetch(JSON_VERSION_URL);
+                    const versionResponse = await fetch(JSON_VERSION_URL + '?t=' + new Date().getTime(), {
+                        cache: 'no-store',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache',
+                            'Expires': '0'
+                        }
+                    });
+                    
                     if (versionResponse.ok) {
-                        currentVersion = await versionResponse.json();
-                        document.getElementById('update-time').textContent = `עדכון אחרון: ${currentVersion.lastUpdate}`;
+                        const versionText = await versionResponse.text();
+                        if (versionText && versionText.trim() !== '') {
+                            currentVersion = JSON.parse(versionText);
+                            document.getElementById('update-time').textContent = `עדכון אחרון: ${currentVersion.lastUpdate}`;
+                        }
                     }
                 } catch (versionError) {
                     console.warn('לא ניתן לטעון מידע גרסה:', versionError);
@@ -318,8 +359,9 @@
                 
             } catch (error) {
                 console.error('שגיאה בטעינת המידע:', error);
-                document.getElementById('prayer-times-body').innerHTML = '<tr><td colspan="3">שגיאה בטעינת זמני התפילה</td></tr>';
-                document.getElementById('announcements-container').innerHTML = '<div class="announcement-item"><div class="announcement-title">שגיאה</div><p>שגיאה בטעינת ההודעות</p></div>';
+                alert('שגיאה בטעינת המידע: ' + error.message);
+                document.getElementById('prayer-times-body').innerHTML = '<tr><td colspan="3">שגיאה בטעינת זמני התפילה: ' + error.message + '</td></tr>';
+                document.getElementById('announcements-container').innerHTML = '<div class="announcement-item"><div class="announcement-title">שגיאה</div><p>שגיאה בטעינת ההודעות: ' + error.message + '</p></div>';
             }
         }
         
@@ -535,4 +577,23 @@
                 }
                 // אתחל את הספירה לאחור מחדש
                 secondsLeft = 60;
-            } el
+            } else {
+                secondsLeft--;
+            }
+        }
+        
+        // התחל את הספירה לאחור
+        countdownInterval = setInterval(updateCountdown, 1000);
+        
+        // התחל את הספירה לאחור מיד
+        updateCountdown();
+        
+        // רענן את התאריך הנוכחי כל דקה
+        setInterval(() => {
+            if (currentData) {
+                document.getElementById('current-date').textContent = getHebrewDate(new Date(), currentData.hebrewDateFormat);
+            }
+        }, 60 * 1000);
+    </script>
+</body>
+</html>
