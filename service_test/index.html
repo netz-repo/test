@@ -229,7 +229,8 @@
         // רישום ה-Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                // שימוש בנתיב יחסי במקום נתיב אבסולוטי
+                navigator.serviceWorker.register('sw.js')
                     .then(registration => {
                         console.log('Service Worker נרשם בהצלחה:', registration.scope);
                         checkForUpdates();
@@ -237,6 +238,8 @@
                     .catch(error => {
                         console.error('רישום Service Worker נכשל:', error);
                         document.getElementById('update-status').textContent = 'מצב חיבור: שגיאה ברישום Service Worker';
+                        // הצג את השגיאה המדויקת
+                        alert('שגיאת רישום Service Worker: ' + error.message);
                     });
             });
         }
