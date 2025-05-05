@@ -74,11 +74,31 @@
             overflow-y: auto;
         }
         
+        .date-time-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
         .current-date {
             font-size: 1.8rem;
             font-weight: bold;
-            margin-bottom: 10px;
             color: #213e8c;
+            flex: 1;
+            text-align: right;
+        }
+        
+        .current-time {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #213e8c;
+            background-color: rgba(240, 240, 240, 0.7);
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-right: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .time-table {
@@ -175,7 +195,7 @@
             h1 {
                 font-size: 3.5rem;
             }
-            .current-date {
+            .current-date, .current-time {
                 font-size: 2.5rem;
             }
             .time-table th, .time-table td {
@@ -201,7 +221,10 @@
         
         <div class="content">
             <div class="prayer-times">
-                <div class="current-date" id="current-date"></div>
+                <div class="date-time-container">
+                    <div class="current-date" id="current-date"></div>
+                    <div class="current-time" id="current-time"></div>
+                </div>
                 
                 <table class="time-table">
                     <thead>
@@ -260,6 +283,22 @@
         const JSON_VERSION_URL = 'version.json';
         let currentData = null;
         let currentVersion = null;
+        
+        // פונקציה לעדכון השעון
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        
+        // עדכון השעון כל שנייה
+        setInterval(updateClock, 1000);
+        
+        // הפעלה ראשונית של השעון
+        updateClock();
         
         // פונקציה לטעינת המידע מקובץ JSON מקומי
         async function loadData() {
