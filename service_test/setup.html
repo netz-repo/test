@@ -195,6 +195,69 @@
                 location.reload();
             });
             
+            // לחיצה על כפתור ניקוי המטמון
+            document.getElementById('clear-cache-btn').addEventListener('click', function() {
+                clearCache();
+            });
+            
+            // פונקציה לניקוי המטמון
+            function clearCache() {
+                if ('caches' in window) {
+                    const statusElement = document.createElement('div');
+                    statusElement.className = 'status warning';
+                    statusElement.innerHTML = '<div class="loading"></div> מנקה את המטמון...';
+                    document.querySelector('.step:last-child').appendChild(statusElement);
+                    
+                    // מוחק את כל המטמונים
+                    caches.keys()
+                        .then(cacheNames => {
+                            return Promise.all(
+                                cacheNames.map(cacheName => {
+                                    console.log('מוחק מטמון:', cacheName);
+                                    return caches.delete(cacheName);
+                                })
+                            );
+                        })
+                        .then(() => {
+                            // מסיר את הרישום של ה-Service Worker
+                            if ('serviceWorker' in navigator) {
+                                return navigator.serviceWorker.getRegistrations()
+                                    .then(registrations => {
+                                        return Promise.all(
+                                            registrations.map(registration => {
+                                                console.log('מסיר רישום של Service Worker:', registration);
+                                                return registration.unregister();
+                                            })
+                                        );
+                                    });
+                            }
+                            return Promise.resolve();
+                        })
+                        .then(() => {
+                            statusElement.className = 'status success';
+                            statusElement.textContent = 'כל הנתונים נמחקו בהצלחה! יש לרענן את הדף.';
+                            
+                            // הוסף כפתור לרענון הדף
+                            const refreshButton = document.createElement('button');
+                            refreshButton.textContent = 'רענן דף';
+                            refreshButton.className = 'btn';
+                            refreshButton.style.marginTop = '10px';
+                            refreshButton.addEventListener('click', function() {
+                                window.location.reload(true);
+                            });
+                            
+                            document.querySelector('.step:last-child').appendChild(refreshButton);
+                        })
+                        .catch(error => {
+                            console.error('שגיאה בניקוי המטמון:', error);
+                            statusElement.className = 'status error';
+                            statusElement.textContent = 'שגיאה בניקוי המטמון: ' + error.message;
+                        });
+                } else {
+                    alert('הדפדפן שלך אינו תומך במטמון (Cache API)');
+                }
+            }
+            
             // פונקציה לבדיקת תאימות הדפדפן
             function checkBrowserCompatibility() {
                 browserStatus.style.display = 'block';
