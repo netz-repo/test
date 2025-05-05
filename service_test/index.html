@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת מידע לבית כנסת</title>
+    <style>
+        body {
+            font-family: 'Arial Hebrew', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f4e6;
+            color: #333;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+        
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: #213e8c;
+        }
+        
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+        
+        .prayer-times {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .announcements {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-height: 30vh;
+            overflow-y: auto;
+        }
+        
+        .current-date {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #213e8c;
+        }
+        
+        .time-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .time-table th, .time-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .time-table th {
+            background-color: #213e8c;
+            color: white;
+        }
+        
+        .announcement-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .announcement-title {
+            font-weight: bold;
+            color: #213e8c;
+            font-size: 1.2rem;
+        }
+        
+        .update-status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+        
+        footer {
+            margin-top: auto;
+            padding: 10px 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        /* תוספת עבור מצב טעינה */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loading.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #213e8c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* התאמה למסכים גדולים */
+        @media (min-width: 1920px) {
+            h1 {
+                font-size: 3.5rem;
+            }
+            .current-date {
+                font-size: 2.5rem;
+            }
+            .time-table th, .time-table td {
+                font-size: 1.8rem;
+                padding: 15px;
+            }
+            .announcement-title {
+                font-size: 2rem;
+            }
+            .announcement-item p {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    
+    <div class="container">
+        <header>
+            <h1 id="synagogue-name">בית הכנסת המרכזי</h1>
+        </header>
+        
+        <div class="content">
+            <div class="prayer-times">
+                <div class="current-date" id="current-date"></div>
+                
+                <table class="time-table">
+                    <thead>
+                        <tr>
+                            <th>תפילה</th>
+                            <th>שעה</th>
+                            <th>הערות</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prayer-times-body">
+                        <!-- יטען דינמית מה-JSON -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="announcements">
+                <h2>הודעות</h2>
+                <div id="announcements-container">
+                    <!-- יטען דינמית מה-JSON -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div id="update-time"></div>
+        </footer>
+    </div>
+    
+    <div class="update-status" id="update-status">מצב חיבור: בדיקה...</div>
+    
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+    
+    <script>
+        // רישום ה-Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker נרשם בהצלחה:', registration.scope);
+                        checkForUpdates();
+                    })
+                    .catch(error => {
+                        console.error('רישום Service Worker נכשל:', error);
+                        document.getElementById('update-status').textContent = 'מצב חיבור: שגיאה ברישום Service Worker';
+                    });
+            });
+        }
+        
+        // מיקום קובץ ה-JSON
+        const JSON_URL = 'data.json';
+        const JSON_VERSION_URL = 'version.json';
+        let currentData = null;
+        let currentVersion = null;
+        
+        // פונקציה לטעינת המידע מקובץ JSON מקומי
+        async function loadData() {
+            try {
+                const response = await fetch(JSON_URL);
+                if (!response.ok) {
+                    throw new Error(`שגיאה בטעינת המידע: ${response.status}`);
+                }
+                
+                currentData = await response.json();
+                renderData(currentData);
+                
+                // נסה לטעון את גרסת הקובץ
+                try {
+                    const versionResponse = await fetch(JSON_VERSION_URL);
+                    if (versionResponse.ok) {
+                        currentVersion = await versionResponse.json();
+                        document.getElementById('update-time').textContent = `עדכון אחרון: ${currentVersion.lastUpdate}`;
+                    }
+                } catch (versionError) {
+                    console.warn('לא ניתן לטעון מידע גרסה:', versionError);
+                }
+                
+            } catch (error) {
+                console.error('שגיאה בטעינת המידע:', error);
+                document.getElementById('prayer-times-body').innerHTML = '<tr><td colspan="3">שגיאה בטעינת זמני התפילה</td></tr>';
+                document.getElementById('announcements-container').innerHTML = '<div class="announcement-item"><div class="announcement-title">שגיאה</div><p>שגיאה בטעינת ההודעות</p></div>';
+            }
+        }
+        
+        // פונקציה להצגת המידע בדף
+        function renderData(data) {
+            // עדכון שם בית הכנסת
+            if (data.synagogueName) {
+                document.getElementById('synagogue-name').textContent = data.synagogueName;
+            }
+            
+            // עדכון התאריך הנוכחי (עברי)
+            const currentDate = new Date();
+            document.getElementById('current-date').textContent = getHebrewDate(currentDate, data.hebrewDateFormat);
+            
+            // עדכון זמני תפילה
+            const prayerTimesTable = document.getElementById('prayer-times-body');
+            prayerTimesTable.innerHTML = '';
+            
+            // מצא את זמני התפילה לתאריך הנוכחי
+            const today = formatDate(currentDate);
+            const todayPrayerTimes = findPrayerTimesForDate(data.prayerTimes, today);
+            
+            if (todayPrayerTimes && todayPrayerTimes.times) {
+                todayPrayerTimes.times.forEach(prayer => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${prayer.name}</td>
+                        <td>${prayer.time}</td>
+                        <td>${prayer.notes || ''}</td>
+                    `;
+                    prayerTimesTable.appendChild(row);
+                });
+            } else {
+                prayerTimesTable.innerHTML = '<tr><td colspan="3">אין זמני תפילה זמינים להיום</td></tr>';
+            }
+            
+            // עדכון הודעות
+            const announcementsContainer = document.getElementById('announcements-container');
+            announcementsContainer.innerHTML = '';
+            
+            if (data.announcements && data.announcements.length > 0) {
+                // מיין את ההודעות לפי תאריך (החדשות ביותר קודם)
+                const sortedAnnouncements = [...data.announcements].sort((a, b) => {
+                    return new Date(b.date) - new Date(a.date);
+                });
+                
+                // הצג רק הודעות רלוונטיות (לא פג תוקפן)
+                const relevantAnnouncements = sortedAnnouncements.filter(announcement => {
+                    return !announcement.expiryDate || new Date(announcement.expiryDate) >= currentDate;
+                });
+                
+                relevantAnnouncements.forEach(announcement => {
+                    const announcementElement = document.createElement('div');
+                    announcementElement.className = 'announcement-item';
+                    
+                    const dateObj = new Date(announcement.date);
+                    const formattedDate = `${dateObj.getDate()}/${dateObj.getMonth() + 1}/${dateObj.getFullYear()}`;
+                    
+                    announcementElement.innerHTML = `
+                        <div class="announcement-title">${announcement.title}</div>
+                        <p>${announcement.content}</p>
+                        <small>פורסם: ${formattedDate}</small>
+                    `;
+                    
+                    announcementsContainer.appendChild(announcementElement);
+                });
+            } else {
+                announcementsContainer.innerHTML = '<div class="announcement-item"><p>אין הודעות חדשות</p></div>';
+            }
+        }
+        
+        // פונקציה למציאת זמני תפילה לתאריך ספציפי
+        function findPrayerTimesForDate(prayerTimes, date) {
+            // חפש זמנים ספציפיים לתאריך
+            const specificTimes = prayerTimes.find(item => item.date === date);
+            if (specificTimes) return specificTimes;
+            
+            // אם אין זמנים ספציפיים, השתמש בזמנים קבועים לפי יום בשבוע
+            const currentDay = new Date(date).getDay(); // 0 = ראשון, 6 = שבת
+            const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const dayName = dayNames[currentDay];
+            
+            return prayerTimes.find(item => item.day === dayName);
+        }
+        
+        // פונקציה לפורמט תאריך בתבנית YYYY-MM-DD
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        // פונקציה להמרת תאריך לועזי לעברי (פשוטה - במציאות יש צורך בספריה מתאימה)
+        function getHebrewDate(date, format) {
+            // במציאות יש להשתמש בספריה כמו Hebcal או דומה
+            // זוהי פונקציה לדוגמה בלבד שמחזירה את התאריך הלועזי
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long'
+            };
+            
+            return date.toLocaleDateString('he-IL', options);
+        }
+        
+        // פונקציה לבדיקת עדכונים כאשר יש חיבור לאינטרנט
+        function checkForUpdates() {
+            const updateStatus = document.getElementById('update-status');
+            
+            // בדוק אם יש חיבור לאינטרנט
+            if (navigator.onLine) {
+                updateStatus.textContent = 'מצב חיבור: מחובר';
+                
+                // בדוק האם יש גרסה חדשה של הקובץ
+                fetch(JSON_VERSION_URL + '?t=' + new Date().getTime(), { cache: 'no-store' })
+                    .then(response => {
+                        if (!response.ok) throw new Error('שגיאה בבדיקת גרסה');
+                        return response.json();
+                    })
+                    .then(versionData => {
+                        if (!currentVersion || versionData.version > currentVersion.version) {
+                            updateStatus.textContent = 'מצב חיבור: מוריד עדכונים...';
+                            document.getElementById('loading').classList.add('active');
+                            
+                            // הורד את הקובץ החדש
+                            return fetch(JSON_URL + '?t=' + new Date().getTime(), { cache: 'no-store' })
+                                .then(response => {
+                                    if (!response.ok) throw new Error('שגיאה בהורדת עדכון');
+                                    return response.json();
+                                })
+                                .then(newData => {
+                                    currentData = newData;
+                                    currentVersion = versionData;
+                                    
+                                    // עדכן את ה-cache של השירות וורקר
+                                    if (navigator.serviceWorker.controller) {
+                                        navigator.serviceWorker.controller.postMessage({
+                                            type: 'UPDATE_CACHE',
+                                            url: JSON_URL,
+                                            data: newData
+                                        });
+                                        
+                                        navigator.serviceWorker.controller.postMessage({
+                                            type: 'UPDATE_CACHE',
+                                            url: JSON_VERSION_URL,
+                                            data: versionData
+                                        });
+                                    }
+                                    
+                                    // הצג את המידע החדש
+                                    renderData(newData);
+                                    document.getElementById('update-time').textContent = `עדכון אחרון: ${versionData.lastUpdate}`;
+                                    
+                                    updateStatus.textContent = 'מצב חיבור: מחובר (עודכן)';
+                                    document.getElementById('loading').classList.remove('active');
+                                });
+                        } else {
+                            updateStatus.textContent = 'מצב חיבור: מחובר (מעודכן)';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('שגיאה בבדיקת עדכונים:', error);
+                        updateStatus.textContent = 'מצב חיבור: מחובר (שגיאה בבדיקת עדכונים)';
+                        document.getElementById('loading').classList.remove('active');
+                    });
+            } else {
+                updateStatus.textContent = 'מצב חיבור: לא מחובר';
+            }
+        }
+        
+        // בדוק שינויים במצב החיבור לאינטרנט
+        window.addEventListener('online', () => {
+            checkForUpdates();
+        });
+        
+        window.addEventListener('offline', () => {
+            document.getElementById('update-status').textContent = 'מצב חיבור: לא מחובר';
+        });
+        
+        // טעינה ראשונית של המידע
+        loadData();
+        
+        // הגדר בדיקת עדכונים אוטומטית כל 15 דקות (אם מחובר לאינטרנט)
+        setInterval(() => {
+            if (navigator.onLine) {
+                checkForUpdates();
+            }
+        }, 15 * 60 * 1000);
+        
+        // רענן את התאריך הנוכחי כל דקה
+        setInterval(() => {
+            if (currentData) {
+                document.getElementById('current-date').textContent = getHebrewDate(new Date(), currentData.hebrewDateFormat);
+            }
+        }, 60 * 1000);
+    </script>
+</body>
+</html>
