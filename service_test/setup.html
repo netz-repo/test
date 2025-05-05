@@ -88,6 +88,14 @@
             cursor: not-allowed;
         }
         
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
         .step {
             margin-bottom: 20px;
             text-align: right;
@@ -128,7 +136,7 @@
     </style>
 </head>
 <body>
-    <h1>2התקנת מערכת מידע לבית כנסת</h1>
+    <h1>התקנת מערכת מידע לבית כנסת</h1>
     
     <div class="setup-container">
         <div class="step" id="step1">
@@ -164,7 +172,7 @@
             <div class="step-description">
                 המערכת מותקנת ומוכנה לשימוש. ניתן לפתוח את העמוד הראשי ולהתחיל להשתמש במערכת גם ללא חיבור לאינטרנט.
             </div>
-            <a href="index.html?t=' + new Date().getTime() + '" class="btn" id="open-app">פתח את המערכת</a>
+            <a href="index.html" class="btn" id="open-app">פתח את המערכת</a>
         </div>
         
         <div class="step hidden" id="error-step">
@@ -175,6 +183,16 @@
             </div>
             <button class="btn" id="retry-btn">נסה שוב</button>
         </div>
+        
+        <div class="step" id="manage-step">
+            <span class="step-number">*</span>
+            <div class="step-title">ניהול נתונים</div>
+            <div class="step-description">
+                ניתן לנקות את כל הנתונים השמורים במטמון (cache) על מנת להתחיל מחדש.
+            </div>
+            <button class="btn btn-danger" id="clear-cache-btn">נקה את כל הנתונים מהמטמון</button>
+            <div id="cache-status" class="status">ממתין...</div>
+        </div>
     </div>
     
     <script>
@@ -182,10 +200,12 @@
             const browserStatus = document.getElementById('browser-status');
             const filesStatus = document.getElementById('files-status');
             const swStatus = document.getElementById('sw-status');
+            const cacheStatus = document.getElementById('cache-status');
             const step4 = document.getElementById('step4');
             const errorStep = document.getElementById('error-step');
             const errorDescription = document.getElementById('error-description');
             const retryBtn = document.getElementById('retry-btn');
+            const clearCacheBtn = document.getElementById('clear-cache-btn');
             
             // בדיקת תאימות דפדפן
             checkBrowserCompatibility();
@@ -196,67 +216,9 @@
             });
             
             // לחיצה על כפתור ניקוי המטמון
-            document.getElementById('clear-cache-btn').addEventListener('click', function() {
+            clearCacheBtn.addEventListener('click', function() {
                 clearCache();
             });
-            
-            // פונקציה לניקוי המטמון
-            function clearCache() {
-                if ('caches' in window) {
-                    const statusElement = document.createElement('div');
-                    statusElement.className = 'status warning';
-                    statusElement.innerHTML = '<div class="loading"></div> מנקה את המטמון...';
-                    document.querySelector('.step:last-child').appendChild(statusElement);
-                    
-                    // מוחק את כל המטמונים
-                    caches.keys()
-                        .then(cacheNames => {
-                            return Promise.all(
-                                cacheNames.map(cacheName => {
-                                    console.log('מוחק מטמון:', cacheName);
-                                    return caches.delete(cacheName);
-                                })
-                            );
-                        })
-                        .then(() => {
-                            // מסיר את הרישום של ה-Service Worker
-                            if ('serviceWorker' in navigator) {
-                                return navigator.serviceWorker.getRegistrations()
-                                    .then(registrations => {
-                                        return Promise.all(
-                                            registrations.map(registration => {
-                                                console.log('מסיר רישום של Service Worker:', registration);
-                                                return registration.unregister();
-                                            })
-                                        );
-                                    });
-                            }
-                            return Promise.resolve();
-                        })
-                        .then(() => {
-                            statusElement.className = 'status success';
-                            statusElement.textContent = 'כל הנתונים נמחקו בהצלחה! יש לרענן את הדף.';
-                            
-                            // הוסף כפתור לרענון הדף
-                            const refreshButton = document.createElement('button');
-                            refreshButton.textContent = 'רענן דף';
-                            refreshButton.className = 'btn';
-                            refreshButton.style.marginTop = '10px';
-                            refreshButton.addEventListener('click', function() {
-                                window.location.reload(true);
-                            });
-                            
-                            document.querySelector('.step:last-child').appendChild(refreshButton);
-                        })
-                        .catch(error => {
-                            console.error('שגיאה בניקוי המטמון:', error);
-                            statusElement.className = 'status error';
-                            statusElement.textContent = 'שגיאה בניקוי המטמון: ' + error.message;
-                        });
-                } else {
-                    alert('הדפדפן שלך אינו תומך במטמון (Cache API)');
-                }
-            }
             
             // פונקציה לבדיקת תאימות הדפדפן
             function checkBrowserCompatibility() {
@@ -350,6 +312,9 @@
                             // הצג את שלב הסיום
                             setTimeout(function() {
                                 step4.classList.remove('hidden');
+                                
+                                // עדכן את הקישור עם פרמטר זמן כדי למנוע טעינה מהמטמון
+                                document.getElementById('open-app').href = 'index.html?t=' + new Date().getTime();
                             }, 500);
                         })
                         .catch(error => {
@@ -365,6 +330,65 @@
                     swStatus.className = 'status error';
                     swStatus.textContent = 'הדפדפן אינו תומך ב-Service Worker ✗';
                     showError('הדפדפן שלך אינו תומך בטכנולוגיית Service Worker הדרושה למערכת.');
+                }
+            }
+            
+            // פונקציה לניקוי המטמון
+            function clearCache() {
+                if ('caches' in window) {
+                    cacheStatus.style.display = 'block';
+                    cacheStatus.className = 'status warning';
+                    cacheStatus.innerHTML = '<div class="loading"></div> מנקה את המטמון...';
+                    
+                    // מוחק את כל המטמונים
+                    caches.keys()
+                        .then(cacheNames => {
+                            console.log('מטמונים שנמצאו:', cacheNames);
+                            return Promise.all(
+                                cacheNames.map(cacheName => {
+                                    console.log('מוחק מטמון:', cacheName);
+                                    return caches.delete(cacheName);
+                                })
+                            );
+                        })
+                        .then(() => {
+                            // מסיר את הרישום של ה-Service Worker
+                            if ('serviceWorker' in navigator) {
+                                return navigator.serviceWorker.getRegistrations()
+                                    .then(registrations => {
+                                        console.log('רישומי Service Worker שנמצאו:', registrations.length);
+                                        return Promise.all(
+                                            registrations.map(registration => {
+                                                console.log('מסיר רישום של Service Worker:', registration);
+                                                return registration.unregister();
+                                            })
+                                        );
+                                    });
+                            }
+                            return Promise.resolve();
+                        })
+                        .then(() => {
+                            cacheStatus.className = 'status success';
+                            cacheStatus.textContent = 'כל הנתונים נמחקו בהצלחה! יש לרענן את הדף.';
+                            
+                            // הוסף כפתור לרענון הדף
+                            const refreshButton = document.createElement('button');
+                            refreshButton.textContent = 'רענן דף';
+                            refreshButton.className = 'btn';
+                            refreshButton.style.marginTop = '10px';
+                            refreshButton.addEventListener('click', function() {
+                                window.location.reload(true);
+                            });
+                            
+                            document.getElementById('manage-step').appendChild(refreshButton);
+                        })
+                        .catch(error => {
+                            console.error('שגיאה בניקוי המטמון:', error);
+                            cacheStatus.className = 'status error';
+                            cacheStatus.textContent = 'שגיאה בניקוי המטמון: ' + error.message;
+                        });
+                } else {
+                    alert('הדפדפן שלך אינו תומך במטמון (Cache API)');
                 }
             }
             
