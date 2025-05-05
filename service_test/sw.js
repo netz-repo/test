@@ -3,11 +3,11 @@ const CACHE_NAME = 'synagogue-info-cache-v1';
 
 // הקבצים שיש לשמור במטמון בעת ההתקנה
 const FILES_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/data.json',
-  '/version.json',
-  '/background.jpg'
+  './',
+  './index.html',
+  './data.json',
+  './version.json',
+  './background.jpg'
 ];
 
 // התקנת ה-Service Worker
