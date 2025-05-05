@@ -127,7 +127,7 @@ self.addEventListener('fetch', event => {
 
 // טיפול בהודעות מהדף
 self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'UPDATE_CACHE') {
+  if (event.data.type === 'UPDATE_CACHE') {
     console.log('Service Worker: מעדכן מטמון', event.data.url);
     
     // יצירת תגובה חדשה מהמידע שהתקבל
