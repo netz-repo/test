@@ -401,7 +401,6 @@
             // בדוק אם יש חיבור לאינטרנט
             if (navigator.onLine) {
                 updateStatus.textContent = 'מצב חיבור: מחובר';
-                document.getElementById('countdown').style.display = 'inline-block';
                 
                 // בדוק האם יש גרסה חדשה של הקובץ
                 fetch(JSON_VERSION_URL + '?t=' + new Date().getTime(), { cache: 'no-store' })
@@ -445,15 +444,9 @@
                                     
                                     updateStatus.textContent = 'מצב חיבור: מחובר (עודכן)';
                                     document.getElementById('loading').classList.remove('active');
-                                    
-                                    // אתחל את הספירה לאחור
-                                    secondsLeft = 60;
                                 });
                         } else {
                             updateStatus.textContent = 'מצב חיבור: מחובר (מעודכן)';
-                            
-                            // אתחל את הספירה לאחור
-                            secondsLeft = 60;
                         }
                     })
                     .catch(error => {
@@ -469,43 +462,21 @@
         // בדוק שינויים במצב החיבור לאינטרנט
         window.addEventListener('online', () => {
             checkForUpdates();
-            document.getElementById('countdown').style.display = 'inline-block';
         });
         
         window.addEventListener('offline', () => {
             document.getElementById('update-status').textContent = 'מצב חיבור: לא מחובר';
-            document.getElementById('countdown').style.display = 'none';
         });
         
         // טעינה ראשונית של המידע
         loadData();
         
-        // משתנים לניהול הספירה לאחור
-        let countdownInterval;
-        let secondsLeft = 60;
-        
-        // פונקציה לעדכון הספירה לאחור
-        function updateCountdown() {
-            const countdownElement = document.getElementById('countdown');
-            countdownElement.textContent = `בדיקת עדכונים בעוד: ${secondsLeft} שניות`;
-            
-            if (secondsLeft <= 0) {
-                // בדוק עדכונים כשהספירה לאחור מגיעה לאפס
-                if (navigator.onLine) {
-                    checkForUpdates();
-                }
-                // אתחל את הספירה לאחור מחדש
-                secondsLeft = 60;
-            } else {
-                secondsLeft--;
+        // הגדר בדיקת עדכונים אוטומטית כל 15 דקות (אם מחובר לאינטרנט)
+        setInterval(() => {
+            if (navigator.onLine) {
+                checkForUpdates();
             }
-        }
-        
-        // התחל את הספירה לאחור
-        countdownInterval = setInterval(updateCountdown, 1000);
-        
-        // התחל את הספירה לאחור מיד
-        updateCountdown();
+        }, 15 * 60 * 1000);
         
         // רענן את התאריך הנוכחי כל דקה
         setInterval(() => {
