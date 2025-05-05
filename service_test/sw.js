@@ -54,8 +54,30 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   console.log('Service Worker: בקשה נתפסה', event.request.url);
   
+  // אם זו בקשה ל-index.html, כפה בדיקה של הגרסה האחרונה מהשרת תמיד
+  if (event.request.url.includes('index.html')) {
+    console.log('Service Worker: בקשה ל-index.html - בודק גרסה עדכנית מהשרת');
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          // העתק התגובה ושמור במטמון
+          let responseClone = response.clone();
+          caches.open(CACHE_NAME)
+            .then(cache => {
+              console.log('Service Worker: מעדכן מטמון עם גרסה חדשה של index.html');
+              cache.put(event.request, responseClone);
+            });
+          return response;
+        })
+        .catch(() => {
+          // אם אין חיבור לאינטרנט, השתמש בגרסה מהמטמון
+          console.log('Service Worker: אין חיבור לאינטרנט, משתמש בגרסה מהמטמון של index.html');
+          return caches.match(event.request);
+        })
+    );
+  }
   // אסטרטגיית Network First עבור בקשות JSON
-  if (event.request.url.includes('data.json') || event.request.url.includes('version.json')) {
+  else if (event.request.url.includes('data.json') || event.request.url.includes('version.json')) {
     event.respondWith(
       fetch(event.request)
         .then(response => {
