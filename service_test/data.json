@@ -1,12 +1,12 @@
 {
-  "synagogueName": "המרכזי",
+  "synagogueName": "בית הכנסת שיבת ציון",
   "hebrewDateFormat": "long",
   "prayerTimes": [
     {
       "date": "2025-05-05",
       "times": [
         {
-          "name": "7שחרית",
+          "name": "שחרית",
           "time": "06:30",
           "notes": "הנץ החמה 05:45"
         },
